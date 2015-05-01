@@ -1,15 +1,8 @@
 package org.embulk.filter;
 
-import org.embulk.config.Config;
-import org.embulk.config.ConfigDefault;
-import org.embulk.config.ConfigDiff;
-import org.embulk.config.ConfigSource;
-import org.embulk.config.Task;
-import org.embulk.config.TaskSource;
-import org.embulk.spi.Column;
-import org.embulk.spi.FilterPlugin;
-import org.embulk.spi.PageOutput;
-import org.embulk.spi.Schema;
+import org.embulk.config.*;
+import org.embulk.filter.grep.GrepPageOutput;
+import org.embulk.spi.*;
 
 public class GrepFilterPlugin
         implements FilterPlugin
@@ -23,6 +16,9 @@ public class GrepFilterPlugin
         @Config("property2")
         @ConfigDefault("0")
         public int getProperty2();
+
+        @ConfigInject
+        public BufferAllocator getBufferAllocator();
     }
 
     @Override
@@ -42,6 +38,7 @@ public class GrepFilterPlugin
     {
         PluginTask task = taskSource.loadTask(PluginTask.class);
 
-        // TODO
+        return new GrepPageOutput(task, inputSchema, output);
     }
+
 }
